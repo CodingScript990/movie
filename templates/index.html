@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+        <!-- meta-tag -->
+        <link rel="shortcut icon" type="image/x-icon" href="../static/og_logo.png">
+        <meta property="og:title" content="MR(영화랭킹사이트)" />
+        <meta property="og:description" content="영화 리뷰를 위한 공간!" />
+        <meta property="og:image" content="{{ url_for('static', filename='ogmovie.jpg') }}" />
+
+        <title>MR - Movie Ranking</title>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+              integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+        <!-- Google Fonts -->
+        <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+        <style>
+        /* header CSS */
+        .bg-light{
+            width: 70vw;
+            margin: auto;
+        }
+
+        .navbar-brand {
+            font-size: 1.75rem;
+            font-weight: bold;
+            margin-left: 0.75rem;
+            font-family: Gowun Batang, serif;
+        }
+
+        .header-logo {
+            width: 1.85vw;
+            border-radius: 0.5rem;
+            margin-right: 0.25rem;
+        }
+
+        /* main wrap CSS */
+        .wrap {
+            width: 70vw;
+            margin: auto;
+            background-color: #F0F0F1;
+        }
+
+        .display-4 {
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+            text-align: center;
+            font-family: Gowun Batang, serif;
+            -ms-user-select: none;
+            -moz-user-select: none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* main menu - nav(ul,li) */
+        .nav-Btn {
+            margin-left: 3rem;
+        }
+
+        .nav-item {
+            font-size: 1.085rem;
+            font-weight: bold;
+            font-family: 'Barlow', sans-serif;
+            float: left;
+            margin-left: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .all {
+            color: #887B6E;
+            font-weight: bold;
+            padding: 0;
+        }
+
+        .all:hover {
+            color: #211E1B;
+            font-weight: bold;
+        }
+
+        .preview {
+            color: #887B6E;
+            font-weight: bold;
+            padding: 0;
+        }
+
+        .preview:hover {
+            color: #211E1B;
+            font-weight: bold;
+        }
+
+        /* main cards */
+        .row {
+            margin: auto;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* main-cards */
+        .card {
+            width: 9vw;
+            background-color: transparent !important;
+            margin-bottom: 2rem;
+            margin-left: 0.5rem;
+            border: 0.2rem solid #A7997C;
+            outline: 0;
+        }
+
+        .card:hover {
+            box-shadow: 0.1rem 0.1rem 0.2rem 0.05rem #887B6E;
+            transform:scale(1.05);
+        }
+
+        .card-body {
+            text-align: center;
+        }
+
+        /* main-cards Btn */
+        .movie-info {
+            text-decoration: none;
+            color: #887B6E;
+            font-weight: bold;
+            font-family: 'Barlow', sans-serif;
+        }
+
+        .movie-info:hover {
+            color: #5F430A;
+        }
+
+        .movie-review {
+            text-decoration: none;
+            color: #887B6E;
+            font-weight: bold;
+            font-family: 'Barlow', sans-serif;
+            font-size: 1rem;
+        }
+
+        .movie-review:hover {
+            color: #5F430A;
+        }
+
+        /* footer area */
+        .footer {
+            margin-top: 0.4rem;
+            text-align: center;
+            font-family: 'Barlow', sans-serif;
+        }
+
+
+    </style>
+        <script>
+            $(document).ready(function () {
+                showMovie();
+            });
+
+
+            function showMovie() {
+                $.ajax({
+                    type: 'GET',
+                    url: '/api/list',
+                    data: {},
+                    success: function (response) {
+                        let movies = response['movie_lists'];
+
+                        for (let i = 0; i < movies.length; i++){
+                            let img_url = movies[i]['img_url'];
+                            let url = movies[i]['url'];
+
+                            let temp_html = `<div class="card col-4">
+                                                <a href="${url}" class="card-link movie-info"><img src="${img_url}"
+                                                     class="card-img-top" alt="image"></a>
+                                                <div class="card-body">
+                                                    <a href="/review" class="card-link movie-review">리뷰작성</a>
+                                                </div>
+                                            </div>`;
+                            $('#main-cards').append(temp_html);
+                        }
+                    }
+                });
+            }
+
+        </script>
+    </head>
+    <body>
+        <!-- Header Area -->
+        <div class="header">
+            <nav class="navbar navbar-light bg-light">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="/"><img class="header-logo" src="../static/og_logo.png" alt="logo" />MR</a>
+                    <form class="d-flex">
+                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-outline-success" type="submit">Search</button>
+                    </form>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Main Area -->
+        <div class="wrap">
+            <div class="jumbotron">
+                <h1 class="display-4">Movie Ranking</h1>
+
+                <!-- Main-menu Area -->
+                <div class="nav-Btn">
+                    <ul class="nav">
+                        <li class="nav-item">
+                            <a class="nav-link all" aria-current="page" href="/">전체</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link preview" href="/info">영화정보</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Main-Card Area -->
+                <div class="main-cards row" id="main-cards"></div>
+
+                <!-- Main-Card Info Area -->
+                <div class="main-infos row" id="main-infos"></div>
+
+            </div>
+
+        </div>
+
+        <!-- Footer Area -->
+        <div class="footer">
+            <p>Copyright © 아무거나하조 - All Rights Reserved</p>
+        </div>
+
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+                crossorigin="anonymous"></script>
+    </body>
+</html>

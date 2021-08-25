@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+        <title>MR - Movie Ranking</title>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+              integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+        <!-- Google Fonts -->
+        <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+        <style>
+        /* header CSS */
+        .bg-light{
+            width: 70vw;
+            margin: auto;
+        }
+
+        .navbar-brand {
+            font-size: 1.75rem;
+            font-weight: bold;
+            margin-left: 0.75rem;
+            font-family: Gowun Batang, serif;
+        }
+
+        .header-logo {
+            width: 1.85vw;
+            border-radius: 0.5rem;
+            margin-right: 0.25rem;
+        }
+
+        /* main wrap CSS */
+        .wrap {
+            width: 70vw;
+            margin: auto;
+            background-color: #F0F0F1;
+        }
+
+        .display-4 {
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+            text-align: center;
+            font-family: Gowun Batang, serif;
+            -ms-user-select: none;
+            -moz-user-select: none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* review area */
+
+        .form-label {
+            font-size: 1rem;
+            font-family: 'Consolas', 'Deja Vu Sans Mono', 'Bitstream Vera Sans Mono', monospace;
+            font-weight: bold;
+        }
+
+        /* review textarea */
+        .form-control {
+            border-color: #887B6E;
+        }
+
+        /* review Name & Comment area */
+        .review-write {
+            padding-left: 12.5rem;
+        }
+
+        .form-label {
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .name {
+            width: 8vw;
+        }
+
+        .text {
+            width: 50vw;
+        }
+
+        /* review Btn */
+        .submit {
+            background-color: #887B6E;
+            border-color: #887B6E;
+        }
+
+        .submit:hover {
+            background-color: #5F430A;
+            border-color: #5F430A;
+        }
+
+        /* review table */
+        .comment-list {
+            margin: 1rem;
+            padding: 1rem;
+        }
+
+        .table-hover {
+            width: 45vw;
+            margin: auto;
+            text-align: center;
+            border: 0.06rem solid #887B6E;
+        }
+
+        /* footer area */
+        .footer {
+            margin-top: 0.4rem;
+            text-align: center;
+            font-family: 'Barlow', sans-serif;
+        }
+
+    </style>
+        <script>
+            $(document).ready(function () {
+                showReview();
+            });
+
+
+            function makeReview() {
+                let name = $('#exampleFormControlInput1').val(); // name id
+                let comment = $('#exampleFormControlTextarea1').val(); // comment id
+
+                $.ajax({
+                    type: "POST",
+                    url: "/comment",
+                    data: {name_give: name,comment_give: comment},
+                    success: function (response) {
+                        alert(response["msg"]);
+                        window.location.reload();
+                    }
+                })
+            }
+
+            //
+            function showReview() {
+                $.ajax({
+                    type: "GET",
+                    url: "/comment",
+                    data: {},
+                    success: function (response) {
+                        let reviews = response['review_comments'];
+                        for (let i = 0; i < reviews.length; i++) {
+                            let name = reviews[i]['name'];
+                            let comment = reviews[i]['comment'];
+
+                            let temp_html = `
+                                                <tr>
+                                                    <td>${name}</td>
+                                                    <td>${comment}</td>
+                                                </tr>`;
+                            $('#comments-box').append(temp_html);
+                        }
+                    }
+                })
+            }
+
+        </script>
+    </head>
+    <body>
+        <!-- Header Area -->
+        <div class="header">
+            <nav class="navbar navbar-light bg-light">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="/"><img class="header-logo" src="../static/og_logo.png" alt="logo" />MR</a>
+                    <form class="d-flex">
+                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-outline-success" type="submit">Search</button>
+                    </form>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Main Area -->
+        <div class="wrap">
+            <div class="jumbotron">
+                <h1 class="display-4">Movie Ranking</h1>
+            </div>
+
+        <!-- Review Comment Area -->
+            <div  class="review-comment">
+
+            <!-- Review Comment write Area -->
+
+                <div class="review-write">
+                    <!-- Review Comment Name -->
+                    <div class="comment-name">
+                        <div class="mb-3">
+                            <label for="exampleFormControlInput1" class="form-label name-title">Name</label>
+                            <input type="email" class="form-control name" id="exampleFormControlInput1"
+                                   placeholder="name..">
+                        </div>
+                    </div>
+
+                    <!-- Review Comment text -->
+                    <div class="comment-text row">
+                        <div class="mb-3">
+                            <label for="exampleFormControlTextarea1" class="form-label comment-title">댓글</label>
+                            <textarea class="form-control text" id="exampleFormControlTextarea1" rows="3"
+                                      placeholder="입력해주세요.."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review Comment Submit Btn -->
+                <div class="col text-center">
+                    <button onclick="makeReview()" type="button" class="btn btn-primary submit">작성완료</button>
+                </div>
+
+                <!-- Review Comment Table -->
+                <div class="comment-list">
+                    <table id="comment-list" class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">Name</th>
+                                <th scope="col">Comment</th>
+                            </tr>
+                        </thead>
+                        <tbody id="comments-box"></tbody>
+                    </table>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Footer Area -->
+        <div class="footer">
+            <p>Copyright © 아무거나하조 - All Rights Reserved</p>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+                crossorigin="anonymous"></script>
